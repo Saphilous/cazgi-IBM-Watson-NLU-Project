@@ -1,4 +1,22 @@
 const express = require('express');
+const dotenv = require('dotenv')
+dotenv.config()
+
+
+    let api_key = process.env.API_KEY
+    let api_url = process.env.API_URL
+
+    const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1')
+    const { IamAuthenticator } = require('ibm-watson/auth')
+
+    const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
+        version: '2020-08-01',
+        authenticator: new IamAuthenticator({
+            apikey: api_key,
+        }),
+        serviceUrl: api_url,
+        })
+
 const app = new express();
 
 app.use(express.static('client'))
@@ -11,7 +29,28 @@ app.get("/",(req,res)=>{
   });
 
 app.get("/url/emotion", (req,res) => {
+    const querytext = req.query.url
+    let uridecoded = decodeURI(req.query.url)
+    console.log(uridecoded)
+    const analyzeparams = {
+        'text': querytext,
+        'features': {
+            'entities' : {
+                'emotion' : true
+            }, 'keywords': {
+                'emotion': true
 
+            }
+        } 
+    }
+
+    naturalLanguageUnderstanding.analyze(analyzeparams).then(analysisresults =>
+        {
+            console.log(JSON.stringify(analysisresults, null, 2))
+        }).catch( err =>
+            {
+                console.log(err)
+            })
     return res.send({"happy":"90","sad":"10"});
 });
 
