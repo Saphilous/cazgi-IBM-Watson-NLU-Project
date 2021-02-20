@@ -78,7 +78,7 @@ app.get("/url/sentiment", (req,res) => {
         {
             console.log(JSON.stringify(analysisresults, null, 2))
             sentimentresponse = analysisresults.result.entities[0].sentiment.label
-            return res.send({senti: sentimentresponse, outputtext: "The sentiment for the given input is "});
+            return res.send(sentimentresponse);
         }).catch( err =>
             {
                 console.log(err)

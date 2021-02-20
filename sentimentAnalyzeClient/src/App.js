@@ -7,9 +7,8 @@ import axios from 'axios';
 class App extends React.Component {
   state = {innercomp:<textarea rows="4" cols="50" id="textinput"/>,
             mode: "text",
-            sentimentOutput: null,
-            sentiment:true,
-            emotionOutput: []
+          sentimentOutput:[],
+          sentiment:true
         }
   
   renderTextArea = ()=>{
@@ -17,7 +16,7 @@ class App extends React.Component {
     if(this.state.mode === "url") {
       this.setState({innercomp:<textarea rows="4" cols="50" id="textinput"/>,
       mode: "text",
-      sentimentOutput:null,
+      sentimentOutput:[],
       sentiment:true
     })
     } 
@@ -28,7 +27,7 @@ class App extends React.Component {
     if(this.state.mode === "text") {
       this.setState({innercomp:<textarea rows="1" cols="50" id="textinput"/>,
       mode: "url",
-      sentimentOutput:null,
+      sentimentOutput:[],
       sentiment:true
     })
     }
@@ -49,15 +48,17 @@ class App extends React.Component {
 
       //Include code here to check the sentiment and format the data accordingly
 
-      this.setState({sentimentOutput: {sentimentlabel: response.data.senti}});
-      let output = response.data.outputtext;
-      if(response.data.senti === "positive") {
-        output = <div style={{color:"green",fontSize:20}}>{response.data.outputtext}</div>
-      } else if (response.data.senti === "negative"){
-        output = <div style={{color:"red",fontSize:20}}>{response.data.outputtext}</div>
+      this.setState({sentimentOutput:response.data});
+      let output = "The sentiment of the given Input is" + response.data
+      console.log(output)
+      if(response.data === "positive") {
+        output = <div style={{color:"green",fontSize:20}}>The sentiment of the given Input is {response.data}</div>
+      } else if (response.data === "negative"){
+        output = <div style={{color:"red",fontSize:20}}>The sentiment of the given Input is {response.data}</div>
       } else {
-        output = <div style={{color:"yellow",fontSize:20}}>{response.data.outputtext}</div>
+        output = <div style={{color:"yellow",fontSize:20}}>The sentiment of the given Input is {response.data}</div>
       }
+      console.log(output)
       this.setState({sentimentOutput:output});
     });
   }
@@ -74,7 +75,7 @@ class App extends React.Component {
     ret = axios.get(url);
 
     ret.then((response)=>{
-      this.setState({emotionOutput:<EmotionTable emotions={response.data}/>});
+      this.setState({sentimentOutput:<EmotionTable emotions={response.data}/>});
   });
   }
   
@@ -90,7 +91,7 @@ class App extends React.Component {
         <button className="btn-primary" onClick={this.sendForSentimentAnalysis}>Analyze Sentiment</button>
         <button className="btn-primary" onClick={this.sendForEmotionAnalysis}>Analyze Emotion</button>
         <br/>
-            {this.state.sentimentOutput}
+            The sentiment of the given Input is {this.state.sentimentOutput}
       </div>
     );
     }
