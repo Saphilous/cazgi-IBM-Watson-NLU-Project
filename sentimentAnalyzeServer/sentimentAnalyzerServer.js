@@ -133,7 +133,7 @@ app.get("/text/sentiment", (req,res) => {
         {
             console.log(JSON.stringify(analysisresults, null, 2))
             const sentimentresponse = analysisresults.result.entities[0].sentiment.label
-            return res.send(sentimentresponse);
+            return res.send({senti: sentimentresponse});
         }).catch( err =>
             {
                 console.log(err)
