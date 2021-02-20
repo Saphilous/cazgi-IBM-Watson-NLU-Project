@@ -7,8 +7,9 @@ import axios from 'axios';
 class App extends React.Component {
   state = {innercomp:<textarea rows="4" cols="50" id="textinput"/>,
             mode: "text",
-          sentimentOutput:[],
-          sentiment:true
+            sentimentOutput: null,
+            sentiment:true,
+            emotionOutput: []
         }
   
   renderTextArea = ()=>{
@@ -16,7 +17,7 @@ class App extends React.Component {
     if(this.state.mode === "url") {
       this.setState({innercomp:<textarea rows="4" cols="50" id="textinput"/>,
       mode: "text",
-      sentimentOutput:[],
+      sentimentOutput:null,
       sentiment:true
     })
     } 
@@ -27,7 +28,7 @@ class App extends React.Component {
     if(this.state.mode === "text") {
       this.setState({innercomp:<textarea rows="1" cols="50" id="textinput"/>,
       mode: "url",
-      sentimentOutput:[],
+      sentimentOutput:null,
       sentiment:true
     })
     }
@@ -46,16 +47,16 @@ class App extends React.Component {
     ret = axios.get(url);
     ret.then((response)=>{
 
-      //Include code here to check the sentiment and fomrat the data accordingly
+      //Include code here to check the sentiment and format the data accordingly
 
-      this.setState({sentimentOutput:response.data});
-      let output = response.data;
-      if(response.data === "positive") {
-        output = <div style={{color:"green",fontSize:20}}>{response.data}</div>
-      } else if (response.data === "negative"){
-        output = <div style={{color:"red",fontSize:20}}>{response.data}</div>
+      this.setState({sentimentOutput: {sentimentlabel: response.data.senti}});
+      let output = response.data.outputtext;
+      if(response.data.senti === "positive") {
+        output = <div style={{color:"green",fontSize:20}}>{response.data.outputtext}</div>
+      } else if (response.data.senti === "negative"){
+        output = <div style={{color:"red",fontSize:20}}>{response.data.outputtext}</div>
       } else {
-        output = <div style={{color:"yellow",fontSize:20}}>{response.data}</div>
+        output = <div style={{color:"yellow",fontSize:20}}>{response.data.outputtext}</div>
       }
       this.setState({sentimentOutput:output});
     });
@@ -73,7 +74,7 @@ class App extends React.Component {
     ret = axios.get(url);
 
     ret.then((response)=>{
-      this.setState({sentimentOutput:<EmotionTable emotions={response.data}/>});
+      this.setState({emotionOutput:<EmotionTable emotions={response.data}/>});
   });
   }
   

@@ -1,9 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv')
+const nluinstancecreator = require('./Middleware/IBMNewInstanceCreator')
 dotenv.config()
 
 
-    let api_key = process.env.API_KEY
+   /* let api_key = process.env.API_KEY
     let api_url = process.env.API_URL
 
     const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1')
@@ -15,7 +16,7 @@ dotenv.config()
             apikey: api_key,
         }),
         serviceUrl: api_url,
-        })
+        }) */
 
 const app = new express();
 
@@ -30,21 +31,22 @@ app.get("/",(req,res)=>{
 
 app.get("/url/emotion", (req,res) => {
     const querytext = req.query.url
-    let uridecoded = decodeURI(req.query.url)
-    console.log(uridecoded)
+    const newinstance = nluinstancecreator
     const analyzeparams = {
-        'text': querytext,
+        'url': querytext,
         'features': {
             'entities' : {
-                'emotion' : true
+                'emotion' : true,
+                'sentiment': false
             }, 'keywords': {
-                'emotion': true
+                'emotion': true,
+                'sentiment': false
 
             }
         } 
     }
 
-    naturalLanguageUnderstanding.analyze(analyzeparams).then(analysisresults =>
+    newinstance.analyze(analyzeparams).then(analysisresults =>
         {
             console.log(JSON.stringify(analysisresults, null, 2))
         }).catch( err =>
@@ -55,15 +57,87 @@ app.get("/url/emotion", (req,res) => {
 });
 
 app.get("/url/sentiment", (req,res) => {
-    return res.send("url sentiment for "+req.query.url);
+    const querytext = req.query.url
+    const newinstance = nluinstancecreator
+    let sentimentresponse
+    const analyzeparams = {
+        'url': querytext,
+        'features': {
+            'entities' : {
+                'sentiment' : true,
+                'emotion'  : false
+            }, 'keywords': {
+                'sentiment': true,
+                'emotion': false
+
+            }
+        } 
+    }
+
+    newinstance.analyze(analyzeparams).then(analysisresults =>
+        {
+            console.log(JSON.stringify(analysisresults, null, 2))
+            sentimentresponse = analysisresults.result.entities[0].sentiment.label
+            return res.send({senti: sentimentresponse, outputtext: "The sentiment for the given input is "});
+        }).catch( err =>
+            {
+                console.log(err)
+            })
 });
 
 app.get("/text/emotion", (req,res) => {
+    const querytext = req.query.text
+    const newinstance = nluinstancecreator
+    const analyzeparams = {
+        'text': querytext,
+        'features': {
+            'entities' : {
+                'emotion' : true,
+                'sentiment': false
+            }, 'keywords': {
+                'emotion': true,
+                'sentiment': false
+
+            }
+        } 
+    }
+
+    newinstance.analyze(analyzeparams).then(analysisresults =>
+        {
+            console.log(JSON.stringify(analysisresults, null, 2))
+        }).catch( err =>
+            {
+                console.log(err)
+            })
     return res.send({"happy":"10","sad":"90"});
 });
 
 app.get("/text/sentiment", (req,res) => {
-    return res.send("text sentiment for "+req.query.text);
+    const querytext = req.query.text
+    const newinstance = nluinstancecreator
+    const analyzeparams = {
+        'text': querytext,
+        'features': {
+            'entities' : {
+                'sentiment' : true,
+                'emotion'  : false
+            }, 'keywords': {
+                'sentiment': true,
+                'emotion': false
+
+            }
+        } 
+    }
+
+    newinstance.analyze(analyzeparams).then(analysisresults =>
+        {
+            console.log(JSON.stringify(analysisresults, null, 2))
+            const sentimentresponse = analysisresults.result.entities[0].sentiment.label
+            return res.send(sentimentresponse);
+        }).catch( err =>
+            {
+                console.log(err)
+            })
 });
 
 let server = app.listen(8080, () => {
