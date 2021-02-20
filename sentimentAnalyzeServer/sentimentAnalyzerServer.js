@@ -48,12 +48,12 @@ app.get("/url/emotion", (req,res) => {
 
     newinstance.analyze(analyzeparams).then(analysisresults =>
         {
-            console.log(JSON.stringify(analysisresults, null, 2))
+           const emotionalanalysis = analysisresults.result.entities[0].emotion
+            return res.send({emotions: emotionalanalysis});
         }).catch( err =>
             {
                 console.log(err)
             })
-    return res.send({"happy":"90","sad":"10"});
 });
 
 app.get("/url/sentiment", (req,res) => {
@@ -78,7 +78,7 @@ app.get("/url/sentiment", (req,res) => {
         {
             console.log(JSON.stringify(analysisresults, null, 2))
             sentimentresponse = analysisresults.result.entities[0].sentiment.label
-            return res.send(sentimentresponse);
+            return res.send({senti: sentimentresponse});
         }).catch( err =>
             {
                 console.log(err)

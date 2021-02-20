@@ -74,7 +74,8 @@ class App extends React.Component {
     ret = axios.get(url);
 
     ret.then((response)=>{
-      this.setState({sentimentOutput:<EmotionTable emotions={response.data}/>});
+        console.log(response.data.emotions)
+      this.setState({sentimentOutput:<EmotionTable emotions={response.data.emotions}/>});
   });
   }
   
