@@ -1,7 +1,6 @@
 {
   "name": "sentimentanalyzeserver",
   "version": "1.0.0",
-  "description": "",
   "main": "sentimentAnalyzerServer.js",
   "scripts": {
     "start": "nodemon sentimentAnalyzerServer.js",
@@ -17,5 +16,6 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
-  }
+  },
+  "description": ""
 }
